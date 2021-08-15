@@ -1,27 +1,22 @@
-#!/usr/bin/env python
-"""
-A simple app to create a JWT token.
-"""
 import os
 import logging
 import datetime
 import functools
 import jwt
-import sys, traceback #stacktrace
-#from jose import jwt
 
 # pylint: disable=import-error
 from flask import Flask, jsonify, request, abort
 
+"""
+A simple app to create a JWT token.
+"""
 
-JWT_SECRET = os.environ.get('JWT_SECRET', 'abc123abc1234')
-LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
-
+JWT_SECRET = os.environ.get('JWT_SECRET', 'myjwtsecret')
+LOG_LEVEL = os.environ.get('LOG_LEVEL', 'DEBUG')
 
 def _logger():
     '''
     Setup logger format, level, and handler.
-
     RETURNS: log object
     '''
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -70,11 +65,10 @@ def auth():
     Create JWT token based on email.
     """
     request_data = request.get_json()
-    try:
-        print('Received request:',request.get_json())
-    except Exception as e:
-        print('Error while doing authenticating:', e)
-        traceback.print_exc()
+    if request_data is None:
+        print("request returned None")
+    else:
+        print("data is returned somethings")
     email = request_data.get('email')
     password = request_data.get('password')
     if not email:
@@ -86,10 +80,10 @@ def auth():
     body = {'email': email, 'password': password}
 
     user_data = body
-
+    print('user_data : ',user_data)
     #return jsonify(token=_get_jwt(user_data).decode('utf-8'))
     return jsonify(token=_get_jwt(user_data))
-
+    
 
 @APP.route('/contents', methods=['GET'])
 def decode_jwt():
